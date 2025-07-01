@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:17
+    container_name: budget_tracker-db
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: budget_tracking
+      POSTGRES_USER: serkan_oray
+      POSTGRES_PASSWORD: password
+    volumes:
+      - budget_db_data:/var/lib/postgresql/data
+
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: budget_tracker-backend
+    ports:
+      - "8089:8089"
+    depends_on:
+      - db
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/budget_tracking
+      SPRING_DATASOURCE_USERNAME: serkan_oray
+      SPRING_DATASOURCE_PASSWORD: password
+
+volumes:
+  budget_db_data:
